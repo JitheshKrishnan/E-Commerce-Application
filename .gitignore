@@ -1,0 +1,17 @@
+# Node (React Frontend)
+frontend/node_modules/
+frontend/build/
+frontend/.env
+
+# Java (Spring Boot Backend)
+backend/target/
+backend/*.log
+*.class
+*.jar
+*.war
+backend/.env
+
+# IDE files
+.idea/
+.vscode/
+.DS_Store
