@@ -55,4 +55,6 @@ public interface OrderService {
     boolean canCancelOrder(Long orderId);
     boolean isValidOrderForPayment(Long orderId);
     String generateOrderNumber();
+
+    Long countOrdersByUserId(Long userId);
 }

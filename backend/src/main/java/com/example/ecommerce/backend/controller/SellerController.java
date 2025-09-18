@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+//TODO: Many Methods Are Incomplete, Rectify Before Deployment
 @RestController
 @RequestMapping("/api/seller")
 @CrossOrigin(origins = "*", maxAge = 3600)

@@ -81,6 +81,7 @@ public class FileUploadController {
         }
     }
 
+    //TODO: Check This URL In SecurityConfig
     @DeleteMapping("/images/{filename}")
     @PreAuthorize("hasRole('SELLER') or hasRole('ADMIN')")
     public ResponseEntity<?> deleteImage(@PathVariable String filename) {

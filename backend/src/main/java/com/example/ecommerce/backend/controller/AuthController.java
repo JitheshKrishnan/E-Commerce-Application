@@ -1,17 +1,28 @@
 package com.example.ecommerce.backend.controller;
 
 import com.example.ecommerce.backend.dto.ApiResponse;
+import com.example.ecommerce.backend.dto.JwtResponse;
 import com.example.ecommerce.backend.dto.LoginRequest;
-import com.example.ecommerce.backend.dto.LoginResponse;
+import com.example.ecommerce.backend.dto.RefreshTokenRequest;
 import com.example.ecommerce.backend.dto.RegisterRequest;
-import com.example.ecommerce.backend.dto.UserResponse;
+import com.example.ecommerce.backend.dto.TokenRefreshResponse;
+import com.example.ecommerce.backend.model.RefreshToken;
 import com.example.ecommerce.backend.model.User;
+import com.example.ecommerce.backend.security.jwt.JwtUtils;
+import com.example.ecommerce.backend.security.services.UserPrincipal;
+import com.example.ecommerce.backend.service.RefreshTokenService;
 import com.example.ecommerce.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,68 +30,85 @@ import jakarta.validation.Valid;
 public class AuthController {
 
     @Autowired
-    private UserService userService;
+    AuthenticationManager authenticationManager;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    RefreshTokenService refreshTokenService;
+
+    @Autowired
+    JwtUtils jwtUtils;
+
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
-            User user = userService.registerUser(
-                    request.getName(),
-                    request.getEmail(),
-                    request.getPassword(),
-                    request.getAddress(),
-                    request.getPhoneNumber()
-            );
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
-            UserResponse response = new UserResponse(user);
-            return ResponseEntity.ok(new ApiResponse("User registered successfully", response));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(new ApiResponse("Registration failed: " + e.getMessage(), null));
-        }
-    }
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
 
-    //TODO: JWT Token Implementation To Be Done
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
-        try {
-            boolean isValid = userService.authenticateUser(request.getEmail(), request.getPassword());
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            List<String> roles = userPrincipal.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
 
-            if (isValid) {
-                User user = userService.getUserByEmail(request.getEmail())
-                        .orElseThrow(() -> new RuntimeException("User not found"));
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(userPrincipal.getId());
 
-                // In real implementation, generate JWT token here
-                String token = "jwt-token-" + user.getId(); // Placeholder
-
-                LoginResponse response = new LoginResponse(token, new UserResponse(user));
-                return ResponseEntity.ok(new ApiResponse("Login successful", response));
-            } else {
-                return ResponseEntity.badRequest()
-                        .body(new ApiResponse("Invalid credentials", null));
-            }
+            return ResponseEntity.ok(new ApiResponse("Login successful", new JwtResponse(
+                    jwt,
+                    refreshToken.getToken(),
+                    userPrincipal.getId(),
+                    userPrincipal.getName(),
+                    userPrincipal.getEmail(),
+                    roles
+            )));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse("Login failed: " + e.getMessage(), null));
         }
     }
 
-    //TODO: Invalidate JWT Token
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
-        // In real implementation, invalidate JWT token
-        return ResponseEntity.ok(new ApiResponse("Logout successful", null));
-    }
-
-    //TODO: Incomplete
-    @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest signUpRequest) {
         try {
-            // Implementation for password reset
-            return ResponseEntity.ok(new ApiResponse("Password reset email sent", null));
+            User user = userService.registerUser(
+                    signUpRequest.getName(),
+                    signUpRequest.getEmail(),
+                    signUpRequest.getPassword(),
+                    signUpRequest.getAddress(),
+                    signUpRequest.getPhoneNumber()
+            );
+
+            return ResponseEntity.ok(new ApiResponse("User registered successfully!", user.getId()));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
-                    .body(new ApiResponse("Password reset failed: " + e.getMessage(), null));
+                    .body(new ApiResponse("Registration failed: " + e.getMessage(), null));
         }
+    }
+
+    @PostMapping("/refreshtoken")
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String token = jwtUtils.generateTokenFromUsername(user.getEmail());
+                    return ResponseEntity.ok(new ApiResponse("Token refreshed successfully",
+                            new TokenRefreshResponse(token, requestRefreshToken)));
+                })
+                .orElseThrow(() -> new RuntimeException("Refresh token is not in database!"));
+    }
+
+    @PostMapping("/signout")
+    public ResponseEntity<?> logoutUser() {
+        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = userPrincipal.getId();
+        refreshTokenService.deleteByUserId(userId);
+        return ResponseEntity.ok(new ApiResponse("Log out successful!", null));
     }
 }

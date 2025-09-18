@@ -2,7 +2,7 @@ package com.example.ecommerce.backend.controller;
 
 import com.example.ecommerce.backend.dto.ApiResponse;
 import com.example.ecommerce.backend.service.AnalyticsService;
-import com.example.ecommerce.backend.service.NotificationService;
+//import com.example.ecommerce.backend.service.NotificationService;
 import com.example.ecommerce.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -27,8 +27,9 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private NotificationService notificationService;
+    //TODO: Use If Using Notification
+//    @Autowired
+//    private NotificationService notificationService;
 
     @GetMapping("/dashboard")
     public ResponseEntity<?> getDashboardMetrics() {
@@ -182,7 +183,8 @@ public class AdminController {
     @PostMapping("/notifications/low-stock-alert")
     public ResponseEntity<?> triggerLowStockAlert() {
         try {
-            notificationService.notifyLowStock();
+            //TODO: Use If Using Notification
+//            notificationService.notifyLowStock();
             return ResponseEntity.ok(new ApiResponse("Low stock alert sent successfully", null));
         } catch (Exception e) {
             return ResponseEntity.badRequest()

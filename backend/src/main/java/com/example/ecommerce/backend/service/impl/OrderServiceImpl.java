@@ -331,4 +331,9 @@ public class OrderServiceImpl implements OrderService {
         long sequence = orderCounter.incrementAndGet();
         return "ORD-" + timestamp + "-" + String.format("%06d", sequence);
     }
+
+    @Override
+    public Long countOrdersByUserId(Long userId) {
+        return orderRepository.countOrdersByUserId(userId);
+    }
 }
