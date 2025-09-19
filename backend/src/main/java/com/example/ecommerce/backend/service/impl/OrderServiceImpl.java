@@ -71,9 +71,14 @@ public class OrderServiceImpl implements OrderService {
             subtotal = subtotal.add(itemTotal);
         }
 
+        BigDecimal totalWeight = BigDecimal.ZERO;
+        for (CartItem cartItem : cartItems) {
+            BigDecimal itemWeight = cartItem.getProduct().getWeight().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+            totalWeight = totalWeight.add(itemWeight);
+        }
+
         BigDecimal taxAmount = calculateTax(subtotal);
-        //TODO: Get Actual Weight from Product
-        BigDecimal shippingCost = calculateShipping(BigDecimal.valueOf(1.0)); // Default weight
+        BigDecimal shippingCost = calculateShipping(totalWeight); // Default weight
         BigDecimal totalPrice = subtotal.add(taxAmount).add(shippingCost);
 
         order.setTaxAmount(taxAmount);
@@ -152,30 +157,38 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public Order updateOrderStatus(Long orderId, OrderStatus newStatus) {
         Order order = getOrderById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
 
-        OrderStatus oldStatus = order.getStatus();
+        // Validate transition
+        if (!order.getStatus().canTransitionTo(newStatus)) {
+            throw new IllegalStateException(
+                    "Invalid transition from " + order.getStatus() + " to " + newStatus
+            );
+        }
+
         order.setStatus(newStatus);
 
-        // Handle inventory changes based on status
-        //TODO: Need To Check For Edge Cases
-        if (newStatus == OrderStatus.DELIVERED && oldStatus != OrderStatus.DELIVERED) {
-            // Confirm inventory reduction
+        if (newStatus == OrderStatus.DELIVERED) {
             for (OrderItem orderItem : order.getOrderItems()) {
                 inventoryService.reduceStock(orderItem.getProduct().getId(), orderItem.getQuantity());
                 inventoryService.releaseReservedStock(orderItem.getProduct().getId(), orderItem.getQuantity());
             }
-        } else if (newStatus == OrderStatus.CANCELLED && oldStatus != OrderStatus.CANCELLED) {
-            // Release reserved inventory
+        } else if (newStatus == OrderStatus.CANCELLED) {
             for (OrderItem orderItem : order.getOrderItems()) {
                 inventoryService.releaseReservedStock(orderItem.getProduct().getId(), orderItem.getQuantity());
             }
+        } else if (newStatus == OrderStatus.REFUNDED) {
+            // Optional: only restock if item is returned
+            // inventoryService.addStock(orderItem.getProduct().getId(), orderItem.getQuantity());
+            //TODO: Implement When Upgrading Your Application
         }
 
         return orderRepository.save(order);
     }
+
 
     @Override
     public Order updatePaymentStatus(Long orderId, PaymentStatus paymentStatus) {

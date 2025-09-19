@@ -35,6 +35,7 @@ public class SupportController {
     @Autowired
     private OrderService orderService;
 
+    //TODO: Incomplete, Implement Before Deployment
     @GetMapping("/dashboard")
     public ResponseEntity<?> getSupportDashboard() {
         try {
@@ -204,7 +205,7 @@ public class SupportController {
         }
     }
 
-    //TODO: Incomplete, Complete Before Deployment
+    //TODO: Incomplete, Implement Before Deployment
     @PostMapping("/customers/{userId}/note")
     public ResponseEntity<?> addCustomerNote(
             @PathVariable Long userId,
@@ -231,7 +232,7 @@ public class SupportController {
         }
     }
 
-    //TODO: Incomplete, Complete Before Deployment
+    //TODO: Incomplete, Implement Before Deployment
     @GetMapping("/customers/{userId}/notes")
     public ResponseEntity<?> getCustomerNotes(@PathVariable Long userId) {
         try {
@@ -263,7 +264,7 @@ public class SupportController {
         }
     }
 
-    //TODO: Incomplete, Complete Before Deployment
+    //TODO: Incomplete, Implement Before Deployment
     @GetMapping("/statistics")
     public ResponseEntity<?> getSupportStatistics() {
         try {
@@ -283,7 +284,7 @@ public class SupportController {
         }
     }
 
-    //TODO: Incomplete, Complete Before Deployment
+    //TODO: Incomplete, Implement Before Deployment
     @PostMapping("/orders/{orderId}/refund")
     public ResponseEntity<?> initiateRefund(
             @PathVariable Long orderId,
@@ -310,7 +311,7 @@ public class SupportController {
         }
     }
 
-    //TODO: Incomplete, Complete Before Deployment
+    //TODO: Incomplete, Implement Before Deployment
     @GetMapping("/reports/daily")
     public ResponseEntity<?> getDailySupportReport(@RequestParam(required = false) String date) {
         try {

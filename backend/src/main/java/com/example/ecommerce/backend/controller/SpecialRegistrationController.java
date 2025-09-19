@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.util.Map;
+import java.util.Optional;
 
-//TODO: Modify It As A Request To Admin
+//TODO: Notification To Admin Pending
 @RestController
 @RequestMapping("/api/auth/register")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -42,15 +43,42 @@ public class SpecialRegistrationController {
             // 2. Store seller application data separately
             // 3. Send verification emails
 
-            // For now, auto-promote to SELLER (in production, require approval)
-            user.setRole(UserRole.SELLER);
-            User updatedUser = userService.updateUser(user);
+            return ResponseEntity.ok(new ApiResponse(
+                    "Seller registration successful. Your account is pending review.",
+                    Map.of(
+                            "userId", user.getId(),
+                            "role", user.getRole().name(),
+                            "status", "pending_approval"
+                    )
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("Seller registration failed: " + e.getMessage(), null));
+        }
+    }
+
+    // Public seller registration (anyone can apply)
+    @PostMapping("/apply-seller")
+    @PreAuthorize("!hasRole('SELLER')")
+    public ResponseEntity<?> applyForSeller(@Valid @RequestBody SellerRegistrationRequest request) {
+        try {
+
+            Optional<User> existingUserOpt = userService.getUserByEmail(request.getEmail());
+            if (existingUserOpt.isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponse("No user found with this email. Please register first.", null));
+            }
+
+            // In real implementation, you might:
+            // 1. Keep as CUSTOMER and require admin approval
+            // 2. Store seller application data separately
+            // 3. Send verification emails
 
             return ResponseEntity.ok(new ApiResponse(
                     "Seller registration successful. Your account is pending review.",
                     Map.of(
-                            "userId", updatedUser.getId(),
-                            "role", updatedUser.getRole().name(),
+                            "userId", existingUserOpt.get().getId(),
+                            "role", existingUserOpt.get().getRole().name(),
                             "status", "pending_approval"
                     )
             ));

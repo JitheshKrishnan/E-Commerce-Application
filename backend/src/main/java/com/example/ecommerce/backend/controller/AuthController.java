@@ -13,6 +13,7 @@ import com.example.ecommerce.backend.security.services.UserPrincipal;
 import com.example.ecommerce.backend.service.RefreshTokenService;
 import com.example.ecommerce.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -105,10 +106,16 @@ public class AuthController {
     }
 
     @PostMapping("/signout")
-    public ResponseEntity<?> logoutUser() {
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long userId = userPrincipal.getId();
-        refreshTokenService.deleteByUserId(userId);
-        return ResponseEntity.ok(new ApiResponse("Log out successful!", null));
+    public ResponseEntity<?> logoutUser(Authentication authentication) {
+        System.out.println(authentication.getPrincipal());
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal userPrincipal) {
+            Long userId = userPrincipal.getId();
+            refreshTokenService.deleteByUserId(userId);
+            return ResponseEntity.ok(new ApiResponse("Log out successful!", null));
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse("User not authenticated", null));
     }
+
 }

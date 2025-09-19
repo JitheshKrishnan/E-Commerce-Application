@@ -137,17 +137,18 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         return orderService.getAverageOrderValue();
     }
 
-    //TODO: Check The Necessity For This Method
-    @Override
-    public Double getCartConversionRate() {
-        // This is a simplified calculation - in reality, you'd track cart creation vs orders
-        // For now, returning a placeholder calculation
-        Long totalOrders = orderService.countOrdersByStatus(OrderStatus.DELIVERED);
-        Long totalUsers = userService.countActiveUsers();
-
-        if (totalUsers == 0) return 0.0;
-        return (totalOrders.doubleValue() / totalUsers.doubleValue()) * 100;
-    }
+    //TODO: Not A Priority Functionality, Include It While Upgrading You Application
+    //TODO: If Using This Method, Make Sure To Add This Method In the Parent Interface
+//    @Override
+//    public Double getCartConversionRate() {
+//        // This is a simplified calculation - in reality, you'd track cart creation vs orders
+//        // For now, returning a placeholder calculation
+//        Long totalOrders = orderService.countOrdersByStatus(OrderStatus.DELIVERED);
+//        Long totalUsers = userService.countActiveUsers();
+//
+//        if (totalUsers == 0) return 0.0;
+//        return (totalOrders.doubleValue() / totalUsers.doubleValue()) * 100;
+//    }
 
     @Override
     public Map<String, Object> getDashboardMetrics() {
@@ -165,7 +166,8 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         metrics.put("lowStockItems", inventoryService.countLowStockItems());
         metrics.put("outOfStockItems", inventoryService.countOutOfStockItems());
         metrics.put("pendingOrders", orderService.countOrdersByStatus(OrderStatus.PENDING));
-        metrics.put("cartConversionRate", getCartConversionRate());
+        //TODO: Uncomment If Using getCartConversionRate() From Interface AnalyticsService
+//        metrics.put("cartConversionRate", getCartConversionRate());
 
         return metrics;
     }

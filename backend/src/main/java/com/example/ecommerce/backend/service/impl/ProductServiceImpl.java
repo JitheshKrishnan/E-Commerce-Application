@@ -1,6 +1,7 @@
 package com.example.ecommerce.backend.service.impl;
 
 import com.example.ecommerce.backend.model.Product;
+import com.example.ecommerce.backend.repository.InventoryRepository;
 import com.example.ecommerce.backend.repository.ProductRepository;
 import com.example.ecommerce.backend.service.InventoryService;
 import com.example.ecommerce.backend.service.ProductService;
@@ -24,7 +25,10 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
 
     @Autowired
-    private InventoryService inventoryService;
+    private InventoryRepository inventoryRepository;
+
+    @Autowired
+    private InventoryManager inventoryManager;
 
     @Override
     public Product createProduct(Product product) {
@@ -40,7 +44,7 @@ public class ProductServiceImpl implements ProductService {
         Product savedProduct = productRepository.save(product);
 
         // Create corresponding inventory entry
-        inventoryService.createInventoryForProduct(savedProduct.getId(), product.getQtyAvailable());
+        inventoryManager.createInventoryForNewProduct(savedProduct.getId(), product.getQtyAvailable());
 
         return savedProduct;
     }
@@ -128,7 +132,7 @@ public class ProductServiceImpl implements ProductService {
             Product updatedProduct = productRepository.save(product);
 
             // Update inventory as well
-            inventoryService.updateStock(productId, quantity);
+            inventoryManager.syncProductAndInventoryStock(productId, quantity);
 
             return updatedProduct;
         }
@@ -145,7 +149,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public boolean canFulfillOrder(Long productId, Integer requiredQuantity) {
-        return inventoryService.canFulfillOrder(productId, requiredQuantity);
+        Integer available = getAvailableQuantity(productId);
+        return available >= requiredQuantity;
+    }
+
+    // Direct method to get available quantity
+    @Transactional(readOnly = true)
+    private Integer getAvailableQuantity(Long productId) {
+        Integer available = inventoryRepository.getAvailableQuantityByProductId(productId);
+        return available != null ? available : 0;
     }
 
     @Override

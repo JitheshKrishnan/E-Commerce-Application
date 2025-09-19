@@ -11,7 +11,6 @@ import java.util.Optional;
 public interface InventoryService {
 
     // Basic CRUD operations
-    Inventory createInventoryForProduct(Long productId, Integer initialQuantity);
     Optional<Inventory> getInventoryByProductId(Long productId);
     Inventory updateInventory(Inventory inventory);
 
@@ -48,7 +47,4 @@ public interface InventoryService {
     List<Inventory> getRecentlyUpdatedInventory(LocalDateTime since);
     Page<Inventory> getRecentlyUpdatedInventory(Pageable pageable);
     Page<Object[]> getInventorySnapshot(Pageable pageable);
-
-    // Validation
-    boolean inventoryExists(Long productId);
 }

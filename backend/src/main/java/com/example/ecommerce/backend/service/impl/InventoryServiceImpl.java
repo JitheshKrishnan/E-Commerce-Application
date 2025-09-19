@@ -3,6 +3,7 @@ package com.example.ecommerce.backend.service.impl;
 import com.example.ecommerce.backend.model.Inventory;
 import com.example.ecommerce.backend.model.Product;
 import com.example.ecommerce.backend.repository.InventoryRepository;
+import com.example.ecommerce.backend.repository.ProductRepository;
 import com.example.ecommerce.backend.service.InventoryService;
 import com.example.ecommerce.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,25 +24,10 @@ public class InventoryServiceImpl implements InventoryService {
     private InventoryRepository inventoryRepository;
 
     @Autowired
-    private ProductService productService;
+    private InventoryManager inventoryManager;
 
-    @Override
-    public Inventory createInventoryForProduct(Long productId, Integer initialQuantity) {
-        if (inventoryExists(productId)) {
-            throw new RuntimeException("Inventory already exists for product: " + productId);
-        }
-
-        Product product = productService.getProductById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
-
-        Inventory inventory = new Inventory();
-        inventory.setProduct(product);
-        inventory.setQtyAvailable(initialQuantity);
-        inventory.setQtyReserved(0);
-        inventory.setReorderLevel(10); // Default reorder level
-
-        return inventoryRepository.save(inventory);
-    }
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -67,7 +53,12 @@ public class InventoryServiceImpl implements InventoryService {
                 .orElseThrow(() -> new RuntimeException("Inventory not found for product: " + productId));
 
         inventory.setQtyAvailable(quantity);
-        return inventoryRepository.save(inventory);
+        Inventory updatedInventory = inventoryRepository.save(inventory);
+
+        // Update product quantity as well
+        inventoryManager.syncProductAndInventoryStock(productId, quantity);
+
+        return updatedInventory;
     }
 
     @Override
@@ -79,8 +70,12 @@ public class InventoryServiceImpl implements InventoryService {
         Inventory inventory = getInventoryByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("Inventory not found for product: " + productId));
 
-        inventory.setQtyAvailable(inventory.getQtyAvailable() + quantity);
-        return inventoryRepository.save(inventory);
+        Integer newQuantity = inventory.getQtyAvailable() + quantity;
+        inventory.setQtyAvailable(newQuantity);
+        Inventory updatedInventory = inventoryRepository.save(inventory);
+
+        inventoryManager.syncProductAndInventoryStock(productId, newQuantity);
+        return updatedInventory;
     }
 
     @Override
@@ -97,8 +92,14 @@ public class InventoryServiceImpl implements InventoryService {
                     inventory.getQtyAvailable() + ", Requested: " + quantity);
         }
 
-        inventory.setQtyAvailable(inventory.getQtyAvailable() - quantity);
-        return inventoryRepository.save(inventory);
+        Integer newQuantity = inventory.getQtyAvailable() - quantity;
+        inventory.setQtyAvailable(newQuantity);
+        Inventory updatedInventory = inventoryRepository.save(inventory);
+
+        // update product quantity
+        inventoryManager.syncProductAndInventoryStock(productId, newQuantity);
+
+        return updatedInventory;
     }
 
     @Override
@@ -260,11 +261,5 @@ public class InventoryServiceImpl implements InventoryService {
     @Transactional(readOnly = true)
     public Page<Object[]> getInventorySnapshot(Pageable pageable) {
         return inventoryRepository.getInventorySnapshot(pageable);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public boolean inventoryExists(Long productId) {
-        return inventoryRepository.existsByProductId(productId);
     }
 }

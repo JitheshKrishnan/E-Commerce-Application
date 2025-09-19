@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+//TODO: Recheck Security For This Controller
 @RestController
 @RequestMapping("/api/health")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -24,6 +25,7 @@ public class HealthController {
         return ResponseEntity.ok(new ApiResponse("Service is healthy", health));
     }
 
+    //TODO: Implement When Upgrading The Application
     @GetMapping("/ready")
     public ResponseEntity<?> readinessCheck() {
         // In real implementation, check database connectivity, external services, etc.

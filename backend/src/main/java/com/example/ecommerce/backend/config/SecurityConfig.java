@@ -68,52 +68,50 @@ public class SecurityConfig {
                         auth
                                 // Public endpoints - no authentication required
                                 //TODO: Verify All Endpoints With Controller Endpoints Before Running
-                                .requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/api/health/**").permitAll()
-                                .requestMatchers("/api/products/public/**").permitAll()
-                                .requestMatchers("/api/search/**").permitAll()
+                                .requestMatchers("/api/auth/**").permitAll() //
+                                .requestMatchers("/api/health/**").permitAll() //
+                                .requestMatchers("/api/products/public/**").permitAll() //
+                                .requestMatchers("/api/search/**").permitAll() //
                                 .requestMatchers("/api/files/images/**").permitAll()
-                                .requestMatchers("/api/payments/webhook/**").permitAll()
+                                .requestMatchers("/api/payments/webhook/**").permitAll() //
 
                                 // Swagger/OpenAPI endpoints (if using)
-                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() //
 
                                 // CUSTOMER role endpoints
-                                .requestMatchers("/api/cart/**").hasAnyRole("CUSTOMER", "ADMIN")
-                                .requestMatchers("/api/orders/my-orders").hasAnyRole("CUSTOMER", "ADMIN")
-                                .requestMatchers("/api/orders/{orderId}/cancel").hasAnyRole("CUSTOMER", "ADMIN")
-                                .requestMatchers("/api/payments/process").hasAnyRole("CUSTOMER", "ADMIN")
-                                .requestMatchers("/api/payments/status/**").hasAnyRole("CUSTOMER", "SUPPORT", "ADMIN")
+                                .requestMatchers("/api/cart/**").hasAnyRole("CUSTOMER", "ADMIN") //
+                                .requestMatchers("/api/orders/my-orders").hasAnyRole("CUSTOMER", "ADMIN") //
+                                .requestMatchers("/api/orders/{orderId}/cancel").hasAnyRole("CUSTOMER", "ADMIN") //
+                                .requestMatchers("/api/payments/process").hasAnyRole("CUSTOMER", "ADMIN") //
+                                .requestMatchers("/api/payments/status/**").hasAnyRole("CUSTOMER", "SUPPORT", "ADMIN") //
 
                                 // SELLER role endpoints
-                                .requestMatchers("/api/seller/**").hasAnyRole("SELLER", "ADMIN")
-                                .requestMatchers("/api/products/manage").hasAnyRole("SELLER", "ADMIN")
-                                .requestMatchers("/api/inventory/**").hasAnyRole("SELLER", "ADMIN")
-                                .requestMatchers("/api/files/upload/**").hasAnyRole("SELLER", "ADMIN")
-                                .requestMatchers(HttpMethod.DELETE, "/api/files/images/**").hasAnyRole("SELLER", "ADMIN")
-
+                                .requestMatchers("/api/seller/**").hasAnyRole("SELLER", "ADMIN") //
+                                .requestMatchers("/api/products/manage").hasAnyRole("SELLER", "ADMIN") //
+                                .requestMatchers("/api/inventory/**").hasAnyRole("SELLER", "ADMIN") //
+                                .requestMatchers("/api/files/upload/**").hasAnyRole("SELLER", "ADMIN") //
 
                                 // SUPPORT role endpoints
-                                .requestMatchers("/api/support/**").hasAnyRole("SUPPORT", "ADMIN")
-                                .requestMatchers("/api/orders/manage").hasAnyRole("SUPPORT", "ADMIN")
-                                .requestMatchers("/api/orders/search").hasAnyRole("SUPPORT", "ADMIN")
-                                .requestMatchers("/api/notifications/send-email").hasAnyRole("SUPPORT", "ADMIN")
-                                .requestMatchers("/api/notifications/send-sms").hasAnyRole("SUPPORT", "ADMIN")
+                                .requestMatchers("/api/support/**").hasAnyRole("SUPPORT", "ADMIN") //
+                                .requestMatchers("/api/orders/manage").hasAnyRole("SUPPORT", "ADMIN") //
+                                .requestMatchers("/api/orders/search").hasAnyRole("SUPPORT", "ADMIN") //
+                                .requestMatchers("/api/notifications/send-email").hasAnyRole("SUPPORT", "ADMIN") //
+                                .requestMatchers("/api/notifications/send-sms").hasAnyRole("SUPPORT", "ADMIN") //
 
                                 // ADMIN role endpoints
-                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/api/users/all").hasRole("ADMIN")
-                                .requestMatchers("/api/users/{id}/activate").hasRole("ADMIN")
-                                .requestMatchers("/api/users/{id}/deactivate").hasRole("ADMIN")
-                                .requestMatchers("/api/products/{id}").hasAnyRole("SELLER", "ADMIN") // DELETE method
-                                .requestMatchers("/api/payments/refund").hasAnyRole("SUPPORT", "ADMIN")
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN") //
+                                .requestMatchers("/api/users/all").hasRole("ADMIN") //
+                                .requestMatchers("/api/users/{userid}/activate").hasRole("ADMIN") //
+                                .requestMatchers("/api/users/{userid}/deactivate").hasRole("ADMIN") //
+                                .requestMatchers("/api/products/{id}").hasAnyRole("SELLER", "ADMIN") //
+                                .requestMatchers("/api/payments/refund").hasAnyRole("SUPPORT", "ADMIN") //
 
                                 // Profile management (all authenticated users)
-                                .requestMatchers("/api/users/profile").hasAnyRole("CUSTOMER", "SELLER", "SUPPORT", "ADMIN")
-                                .requestMatchers("/api/users/change-password").hasAnyRole("CUSTOMER", "SELLER", "SUPPORT", "ADMIN")
+                                .requestMatchers("/api/users/profile").hasAnyRole("CUSTOMER", "SELLER", "SUPPORT", "ADMIN") //
+                                .requestMatchers("/api/users/change-password").hasAnyRole("CUSTOMER", "SELLER", "SUPPORT", "ADMIN") //
 
                                 // Order details (owner, support, admin)
-                                .requestMatchers("/api/orders/{orderNumber}").hasAnyRole("CUSTOMER", "SELLER", "SUPPORT", "ADMIN")
+                                .requestMatchers("/api/orders/{orderNumber}").hasAnyRole("CUSTOMER", "SELLER", "SUPPORT", "ADMIN") //
 
                                 // All other requests need authentication
                                 .anyRequest().authenticated()

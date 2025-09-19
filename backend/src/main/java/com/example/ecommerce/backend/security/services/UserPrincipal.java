@@ -2,27 +2,32 @@ package com.example.ecommerce.backend.security.services;
 
 import com.example.ecommerce.backend.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-//TODO: Use Lombok
 public class UserPrincipal implements UserDetails {
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long id;
-    private String name;
-    private String username;
-    private String email;
+    @Getter
+    private final Long id;
+    @Getter
+    private final String name;
+    private final String username;
+    @Getter
+    private final String email;
 
     @JsonIgnore
-    private String password;
+    private final String password;
 
-    private Collection<? extends GrantedAuthority> authorities;
+    private final Collection<? extends GrantedAuthority> authorities;
 
     public UserPrincipal(Long id, String name, String username, String email, String password,
                          Collection<? extends GrantedAuthority> authorities) {
@@ -47,18 +52,6 @@ public class UserPrincipal implements UserDetails {
                 user.getHashedPassword(),
                 authorities
         );
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     @Override

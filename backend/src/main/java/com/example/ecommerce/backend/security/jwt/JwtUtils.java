@@ -17,7 +17,8 @@ import java.util.Date;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    //TODO: Confirm If jwtSecret Should Be Fixed Or Generated
+    //TODO: For extra security: Use key rotation (e.g., maintain multiple valid keys and rotate every few weeks/months)
+    //TODO: This is for deployment
     @Value("${app.jwtSecret}")
     private String jwtSecret;
 

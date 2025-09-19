@@ -28,6 +28,6 @@ public interface AnalyticsService {
 
     // Performance Metrics
     BigDecimal getAverageOrderValue();
-    Double getCartConversionRate();
+//    Double getCartConversionRate();
     Map<String, Object> getDashboardMetrics();
 }
