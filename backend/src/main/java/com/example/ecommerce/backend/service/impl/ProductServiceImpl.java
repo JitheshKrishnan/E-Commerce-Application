@@ -33,6 +33,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product createProduct(Product product) {
         // Generate SKU if not provided
+        //TODO: Check Edge Case For Sku Generation
         if (product.getSku() == null || product.getSku().trim().isEmpty()) {
             product.setSku(generateUniqueSku());
         }

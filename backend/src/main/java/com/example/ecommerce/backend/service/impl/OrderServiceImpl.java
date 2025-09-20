@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -85,24 +86,27 @@ public class OrderServiceImpl implements OrderService {
         order.setShippingCost(shippingCost);
         order.setTotalPrice(totalPrice);
 
-        // Save order
-        Order savedOrder = orderRepository.save(order);
-
         // Create order items from cart items
+        List<OrderItem> orderItems = new ArrayList<>();
         for (CartItem cartItem : cartItems) {
             OrderItem orderItem = new OrderItem();
-            orderItem.setOrder(savedOrder);
+            orderItem.setOrder(order);
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setUnitPrice(cartItem.getProduct().getPrice());
             orderItem.setProductTitle(cartItem.getProduct().getTitle());
             orderItem.setProductSku(cartItem.getProduct().getSku());
 
-            orderItemService.createOrderItem(orderItem);
+            orderItems.add(orderItem);
 
             // Reserve inventory
             inventoryService.reserveStock(cartItem.getProduct().getId(), cartItem.getQuantity());
         }
+
+        order.setOrderItems(orderItems);
+
+        // Save order
+        Order savedOrder = orderRepository.save(order);
 
         // Clear cart
         cartService.clearCart(userId);

@@ -50,8 +50,8 @@ public class UserController {
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
             user.setName(request.getName());
-            user.setAddress(request.getAddress());
-            user.setPhoneNumber(request.getPhoneNumber());
+            if(request.getAddress() != null) user.setAddress(request.getAddress());
+            if(request.getPhoneNumber() != null)user.setPhoneNumber(request.getPhoneNumber());
 
             User updatedUser = userService.updateUser(user);
             UserResponse response = new UserResponse(updatedUser);

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class CartItemResponse {
-    private Long id;
+    private Long cartItemId;
     private ProductResponse product;
     private Integer quantity;
     private BigDecimal unitPrice;
@@ -19,7 +19,7 @@ public class CartItemResponse {
     private LocalDateTime createdAt;
 
     public CartItemResponse(CartItem cartItem) {
-        this.id = cartItem.getId();
+        this.cartItemId = cartItem.getId();
         this.product = new ProductResponse(cartItem.getProduct());
         this.quantity = cartItem.getQuantity();
         this.unitPrice = cartItem.getProduct().getPrice();

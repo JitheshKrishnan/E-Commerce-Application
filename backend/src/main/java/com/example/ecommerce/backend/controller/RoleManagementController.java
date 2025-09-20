@@ -2,6 +2,7 @@ package com.example.ecommerce.backend.controller;
 
 import com.example.ecommerce.backend.dto.ApiResponse;
 import com.example.ecommerce.backend.dto.RoleChangeRequest;
+import com.example.ecommerce.backend.dto.RoleChangeResponse;
 import com.example.ecommerce.backend.model.User;
 import com.example.ecommerce.backend.model.UserRole;
 import com.example.ecommerce.backend.service.UserService;
@@ -30,18 +31,15 @@ public class RoleManagementController {
             User user = userService.getUserById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
+            UserRole oldRole = user.getRole();
             UserRole newRole = UserRole.valueOf(request.getRole().toUpperCase());
+            if(newRole == oldRole) return ResponseEntity.badRequest()
+                    .body(new ApiResponse("Role change denied: User is already a " + newRole, null));
             user.setRole(newRole);
             User updatedUser = userService.updateUser(user);
 
             return ResponseEntity.ok(new ApiResponse("Role assigned successfully",
-                    Map.of(
-                            "userId", updatedUser.getId(),
-                            "userName", updatedUser.getName(),
-                            "email", updatedUser.getEmail(),
-                            "oldRole", user.getRole().name(),
-                            "newRole", updatedUser.getRole().name()
-                    )
+                    new RoleChangeResponse(updatedUser.getId(), updatedUser.getName(), updatedUser.getEmail(), newRole, oldRole)
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
@@ -55,7 +53,7 @@ public class RoleManagementController {
                 .map(role -> Map.of(
                         "value", role.name(),
                         "label", role.getDisplayName(),
-                        "description", getRoleDescription(role)
+                        "description", role.getDescription()
                 ))
                 .toList();
 
@@ -68,15 +66,28 @@ public class RoleManagementController {
             User user = userService.getUserById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
+            if (user.getRole() == UserRole.SELLER) {
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponse("User is already a seller", null));
+            }
+
             if (user.getRole() != UserRole.CUSTOMER) {
                 return ResponseEntity.badRequest()
                         .body(new ApiResponse("Only customers can be promoted to sellers", null));
             }
 
+            UserRole oldRole = user.getRole();
             user.setRole(UserRole.SELLER);
             User updatedUser = userService.updateUser(user);
+            RoleChangeResponse response = new RoleChangeResponse(
+                    updatedUser.getId(),
+                    updatedUser.getName(),
+                    updatedUser.getEmail(),
+                    UserRole.SELLER,
+                    oldRole
+            );
 
-            return ResponseEntity.ok(new ApiResponse("User promoted to seller successfully", updatedUser));
+            return ResponseEntity.ok(new ApiResponse("User promoted to seller successfully", response));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse("Failed to promote user: " + e.getMessage(), null));
@@ -89,10 +100,28 @@ public class RoleManagementController {
             User user = userService.getUserById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
+            if (user.getRole() == UserRole.SUPPORT) {
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponse("User is already a support staff member", null));
+            }
+
+            if (user.getRole() != UserRole.CUSTOMER) {
+                return ResponseEntity.badRequest()
+                        .body(new ApiResponse("Only customers can be promoted to support staff members", null));
+            }
+
+            UserRole oldRole = user.getRole();
             user.setRole(UserRole.SUPPORT);
             User updatedUser = userService.updateUser(user);
+            RoleChangeResponse response = new RoleChangeResponse(
+                    updatedUser.getId(),
+                    updatedUser.getName(),
+                    updatedUser.getEmail(),
+                    UserRole.SELLER,
+                    oldRole
+            );
 
-            return ResponseEntity.ok(new ApiResponse("User promoted to support successfully", updatedUser));
+            return ResponseEntity.ok(new ApiResponse("User promoted to support successfully", response));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse("Failed to promote user: " + e.getMessage(), null));
@@ -110,14 +139,5 @@ public class RoleManagementController {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse("Failed to get users: " + e.getMessage(), null));
         }
-    }
-
-    private String getRoleDescription(UserRole role) {
-        return switch (role) {
-            case CUSTOMER -> "Regular customer with shopping privileges";
-            case SELLER -> "Vendor who can manage products and inventory";
-            case SUPPORT -> "Customer support staff with order management access";
-            case ADMIN -> "System administrator with full access";
-        };
     }
 }

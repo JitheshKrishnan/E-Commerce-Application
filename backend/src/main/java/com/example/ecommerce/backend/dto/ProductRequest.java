@@ -3,6 +3,8 @@ package com.example.ecommerce.backend.dto;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 // Product DTOs
 @Data
 public class ProductRequest {
@@ -30,4 +32,21 @@ public class ProductRequest {
 
     @Size(max = 50, message = "SKU must not exceed 50 characters")
     private String sku;
+
+    @DecimalMin(value = "0.0", inclusive = false, message = "Height must be greater than 0")
+    @Digits(integer = 6, fraction = 2, message = "Height must be a valid number with up to 6 digits and 2 decimals")
+    private BigDecimal height;
+
+    @DecimalMin(value = "0.0", inclusive = false, message = "Weight must be greater than 0")
+    @Digits(integer = 6, fraction = 2, message = "Weight must be a valid number with up to 6 digits and 2 decimals")
+    private BigDecimal weight;
+
+    @DecimalMin(value = "0.0", inclusive = false, message = "Length must be greater than 0")
+    @Digits(integer = 6, fraction = 2, message = "Length must be a valid number with up to 6 digits and 2 decimals")
+    private BigDecimal length;
+
+    @DecimalMin(value = "0.0", inclusive = false, message = "Width must be greater than 0")
+    @Digits(integer = 6, fraction = 2, message = "Width must be a valid number with up to 6 digits and 2 decimals")
+    private BigDecimal width;
+
 }

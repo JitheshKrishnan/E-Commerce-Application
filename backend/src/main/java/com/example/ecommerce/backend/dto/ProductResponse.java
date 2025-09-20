@@ -20,6 +20,10 @@ public class ProductResponse {
     private String brand;
     private String imageUrl;
     private String sku;
+    private BigDecimal height;
+    private BigDecimal weight;
+    private BigDecimal length;
+    private BigDecimal width;
     private Boolean isActive;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -34,6 +38,10 @@ public class ProductResponse {
         this.brand = product.getBrand();
         this.imageUrl = product.getImageUrl();
         this.sku = product.getSku();
+        this.height = product.getHeight();
+        this.weight = product.getWeight();
+        this.length = product.getLength();
+        this.width = product.getWidth();
         this.isActive = product.getIsActive();
         this.createdAt = product.getCreatedAt();
         this.updatedAt = product.getUpdatedAt();

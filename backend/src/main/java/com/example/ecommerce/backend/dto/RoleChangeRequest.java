@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Pattern;
 @Data
 public class RoleChangeRequest {
     @NotBlank(message = "Role is required")
-    @Pattern(regexp = "CUSTOMER|SELLER|SUPPORT|ADMIN", message = "Invalid role")
+    @Pattern(regexp = "(?i)CUSTOMER|SELLER|SUPPORT|ADMIN", message = "Invalid role")
     private String role;
 
     @NotBlank(message = "Reason is required")

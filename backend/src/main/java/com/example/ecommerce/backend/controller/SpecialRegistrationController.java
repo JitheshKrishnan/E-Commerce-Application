@@ -1,6 +1,7 @@
 package com.example.ecommerce.backend.controller;
 
 import com.example.ecommerce.backend.dto.ApiResponse;
+import com.example.ecommerce.backend.dto.RoleChangeResponse;
 import com.example.ecommerce.backend.dto.SellerRegistrationRequest;
 import com.example.ecommerce.backend.dto.StaffRegistrationRequest;
 import com.example.ecommerce.backend.model.User;
@@ -102,11 +103,19 @@ public class SpecialRegistrationController {
             );
 
             // Assign role based on request
+            UserRole oldRole = user.getRole();
             UserRole assignedRole = UserRole.valueOf(request.getRole().toUpperCase());
             user.setRole(assignedRole);
             User updatedUser = userService.updateUser(user);
+            RoleChangeResponse response = new RoleChangeResponse(
+                    updatedUser.getId(),
+                    updatedUser.getName(),
+                    updatedUser.getEmail(),
+                    updatedUser.getRole(),
+                    oldRole
+            );
 
-            return ResponseEntity.ok(new ApiResponse("Staff registration successful", updatedUser));
+            return ResponseEntity.ok(new ApiResponse("Staff registration successful", response));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse("Staff registration failed: " + e.getMessage(), null));
@@ -126,10 +135,19 @@ public class SpecialRegistrationController {
                     request.getPhoneNumber()
             );
 
-            user.setRole(UserRole.ADMIN);
+            UserRole oldRole = user.getRole();
+            UserRole assignedRole = UserRole.ADMIN;
+            user.setRole(assignedRole);
             User updatedUser = userService.updateUser(user);
+            RoleChangeResponse response = new RoleChangeResponse(
+                    updatedUser.getId(),
+                    updatedUser.getName(),
+                    updatedUser.getEmail(),
+                    updatedUser.getRole(),
+                    oldRole
+            );
 
-            return ResponseEntity.ok(new ApiResponse("Admin registration successful", updatedUser));
+            return ResponseEntity.ok(new ApiResponse("Admin registration successful", response));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse("Admin registration failed: " + e.getMessage(), null));

@@ -207,6 +207,7 @@ public class InventoryController {
         }
     }
 
+    //TODO: Syncing Inventory And Products Should Be Relooked
     @GetMapping("/warehouses")
     public ResponseEntity<?> getWarehouseLocations() {
         try {

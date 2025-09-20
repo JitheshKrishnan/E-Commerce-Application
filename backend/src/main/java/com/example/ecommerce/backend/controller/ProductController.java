@@ -157,6 +157,10 @@ public class ProductController {
             product.setBrand(request.getBrand());
             product.setImageUrl(request.getImageUrl());
             product.setSku(request.getSku());
+            product.setHeight((request.getHeight()));
+            product.setWeight((request.getWeight()));
+            product.setLength((request.getLength()));
+            product.setWidth((request.getWidth()));
 
             Product savedProduct = productService.createProduct(product);
             ProductResponse response = new ProductResponse(savedProduct);
@@ -175,13 +179,17 @@ public class ProductController {
             Product product = productService.getProductById(id)
                     .orElseThrow(() -> new RuntimeException("Product not found"));
 
-            product.setTitle(request.getTitle());
-            product.setDescription(request.getDescription());
-            product.setPrice(request.getPrice());
-            product.setQtyAvailable(request.getQtyAvailable());
-            product.setCategory(request.getCategory());
-            product.setBrand(request.getBrand());
-            product.setImageUrl(request.getImageUrl());
+            if(request.getTitle() != null) product.setTitle(request.getTitle());
+            if(request.getDescription() != null) product.setDescription(request.getDescription());
+            if(request.getPrice() != null) product.setPrice(request.getPrice());
+            if(request.getQtyAvailable() != null) product.setQtyAvailable(request.getQtyAvailable());
+            if(request.getCategory() != null) product.setCategory(request.getCategory());
+            if(request.getBrand() != null) product.setBrand(request.getBrand());
+            if(request.getImageUrl() != null) product.setImageUrl(request.getImageUrl());
+            if(request.getHeight() != null) product.setHeight((request.getHeight()));
+            if(request.getWeight() != null) product.setWeight((request.getWeight()));
+            if(request.getLength() != null) product.setLength((request.getLength()));
+            if(request.getWidth() != null) product.setWidth((request.getWidth()));
 
             Product updatedProduct = productService.updateProduct(product);
             ProductResponse response = new ProductResponse(updatedProduct);

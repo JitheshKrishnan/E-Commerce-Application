@@ -87,9 +87,9 @@ public class InventoryServiceImpl implements InventoryService {
         Inventory inventory = getInventoryByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("Inventory not found for product: " + productId));
 
-        if (inventory.getQtyAvailable() < quantity) {
+        if (inventory.getAvailableForSale() < quantity) {
             throw new RuntimeException("Insufficient stock available. Available: " +
-                    inventory.getQtyAvailable() + ", Requested: " + quantity);
+                    inventory.getAvailableForSale() + ", Requested: " + quantity);
         }
 
         Integer newQuantity = inventory.getQtyAvailable() - quantity;

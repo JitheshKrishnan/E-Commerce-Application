@@ -118,7 +118,7 @@ public class CartController {
     }
 
     @GetMapping("/count")
-    public ResponseEntity<?> getCartCount(Authentication auth) {
+    public ResponseEntity<?> getCartItemCount(Authentication auth) {
         try {
             User user = userService.getUserByEmail(auth.getName())
                     .orElseThrow(() -> new RuntimeException("User not found"));
@@ -132,6 +132,7 @@ public class CartController {
     }
 
 
+    //TODO: Ensure If Checkout Should be Done After Checking Inventory
     @PostMapping("/validate")
     public ResponseEntity<?> validateCart(Authentication auth) {
         try {
