@@ -3,7 +3,7 @@ package com.example.ecommerce.backend.service.impl;
 import com.example.ecommerce.backend.model.*;
 import com.example.ecommerce.backend.repository.OrderRepository;
 import com.example.ecommerce.backend.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,22 +19,13 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private CartService cartService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private InventoryService inventoryService;
-
-    @Autowired
-    private OrderItemService orderItemService;
+    private final OrderRepository orderRepository;
+    private final CartService cartService;
+    private final UserService userService;
+    private final InventoryService inventoryService;
 
     private static final AtomicLong orderCounter = new AtomicLong();
 

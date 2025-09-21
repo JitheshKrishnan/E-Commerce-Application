@@ -3,9 +3,8 @@ package com.example.ecommerce.backend.service.impl;
 import com.example.ecommerce.backend.model.Product;
 import com.example.ecommerce.backend.repository.InventoryRepository;
 import com.example.ecommerce.backend.repository.ProductRepository;
-import com.example.ecommerce.backend.service.InventoryService;
 import com.example.ecommerce.backend.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,16 +18,12 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private InventoryRepository inventoryRepository;
-
-    @Autowired
-    private InventoryManager inventoryManager;
+    private final ProductRepository productRepository;
+    private final InventoryRepository inventoryRepository;
+    private final InventoryManager inventoryManager;
 
     @Override
     public Product createProduct(Product product) {

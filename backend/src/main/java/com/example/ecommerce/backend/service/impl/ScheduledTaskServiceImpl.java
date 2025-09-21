@@ -3,9 +3,9 @@
 //import com.example.ecommerce.backend.model.Inventory;
 //import com.example.ecommerce.backend.service.*;
 //import lombok.extern.slf4j.Slf4j;
-//import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.scheduling.annotation.Scheduled;
 //import org.springframework.stereotype.Service;
+//import lombok.RequiredArgsConstructor;
 //
 //import java.time.LocalDateTime;
 //import java.util.List;
@@ -13,19 +13,13 @@
 //
 //@Service
 //@Slf4j
+//@RequiredArgsConstructor
 //public class ScheduledTaskServiceImpl implements ScheduledTaskService {
 //
-//    @Autowired
-//    private CartService cartService;
-//
-//    @Autowired
-//    private InventoryService inventoryService;
-//
-//    @Autowired
-//    private NotificationService notificationService;
-//
-//    @Autowired
-//    private AnalyticsService analyticsService;
+//    private final CartService cartService;
+//    private final InventoryService inventoryService;
+//    private final NotificationService notificationService;
+//    private final AnalyticsService analyticsService;
 //
 //    // Run every hour
 //    @Scheduled(cron = "0 0 * * * *")

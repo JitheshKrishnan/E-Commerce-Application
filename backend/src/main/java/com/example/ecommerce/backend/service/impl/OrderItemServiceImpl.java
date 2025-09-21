@@ -3,7 +3,7 @@ package com.example.ecommerce.backend.service.impl;
 import com.example.ecommerce.backend.model.OrderItem;
 import com.example.ecommerce.backend.repository.OrderItemRepository;
 import com.example.ecommerce.backend.service.OrderItemService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,10 +16,10 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class OrderItemServiceImpl implements OrderItemService {
 
-    @Autowired
-    private OrderItemRepository orderItemRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     public OrderItem createOrderItem(OrderItem orderItem) {

@@ -4,7 +4,7 @@ import com.example.ecommerce.backend.dto.ApiResponse;
 import com.example.ecommerce.backend.dto.ProductResponse;
 import com.example.ecommerce.backend.model.Product;
 import com.example.ecommerce.backend.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,13 +17,14 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/search")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class SearchController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
+    //TODO: Can Incorporate With public/filters in ProductController
     @GetMapping("/products")
     public ResponseEntity<?> searchProducts(
             @RequestParam(required = false) String q,
@@ -138,6 +139,7 @@ public class SearchController {
         }
     }
 
+    //TODO: Modify It According to Use Case
     @GetMapping("/filters")
     public ResponseEntity<?> getAvailableFilters() {
         try {
@@ -210,6 +212,7 @@ public class SearchController {
         }
     }
 
+    //TODO: Incorporate Into ProductController
     @GetMapping("/recent")
     public ResponseEntity<?> getRecentProducts(
             @RequestParam(defaultValue = "12") int limit) {
@@ -227,6 +230,7 @@ public class SearchController {
         }
     }
 
+    //TODO: Incorporate Into ProductController
     @GetMapping("/category/{categoryName}")
     public ResponseEntity<?> getProductsByCategory(
             @PathVariable String categoryName,
@@ -255,6 +259,7 @@ public class SearchController {
         }
     }
 
+    //TODO: Incorporate Into ProductController
     @GetMapping("/brand/{brandName}")
     public ResponseEntity<?> getProductsByBrand(
             @PathVariable String brandName,

@@ -3,10 +3,9 @@ package com.example.ecommerce.backend.config;
 import com.example.ecommerce.backend.security.jwt.AuthEntryPointJwt;
 import com.example.ecommerce.backend.security.jwt.AuthTokenFilter;
 import com.example.ecommerce.backend.security.services.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -26,14 +25,12 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final AuthEntryPointJwt unauthorizedHandler;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -72,7 +69,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/health/**").permitAll() //
                                 .requestMatchers("/api/products/public/**").permitAll() //
                                 .requestMatchers("/api/search/**").permitAll() //
-                                .requestMatchers("/api/files/images/**").permitAll()
+//                                .requestMatchers("/api/files/images/**").permitAll()
                                 .requestMatchers("/api/payments/webhook/**").permitAll() //
 
                                 // Swagger/OpenAPI endpoints (if using)

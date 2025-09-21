@@ -10,7 +10,7 @@ import com.example.ecommerce.backend.model.PaymentStatus;
 import com.example.ecommerce.backend.model.User;
 import com.example.ecommerce.backend.service.OrderService;
 import com.example.ecommerce.backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,15 +24,13 @@ import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/orders")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private UserService userService;
+    private final OrderService orderService;
+    private final UserService userService;
 
     // Customer endpoints
     @PostMapping

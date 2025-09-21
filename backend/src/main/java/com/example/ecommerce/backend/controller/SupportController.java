@@ -10,7 +10,7 @@ import com.example.ecommerce.backend.model.User;
 import com.example.ecommerce.backend.model.UserRole;
 import com.example.ecommerce.backend.service.OrderService;
 import com.example.ecommerce.backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,16 +24,14 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/support")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @PreAuthorize("hasRole('SUPPORT') or hasRole('ADMIN')")
 public class SupportController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private OrderService orderService;
+    private final UserService userService;
+    private final OrderService orderService;
 
     //TODO: Incomplete, Implement Before Deployment
     @GetMapping("/dashboard")
@@ -84,6 +82,9 @@ public class SupportController {
             User customer = userService.getUserById(userId)
                     .orElseThrow(() -> new RuntimeException("Customer not found"));
 
+            if(customer.getRole() != UserRole.CUSTOMER) return ResponseEntity
+                    .badRequest().body(new ApiResponse("User with id " + userId + " is not a customer", null));
+
             // Get customer order statistics
             Long totalOrders = orderService.countOrdersByUserId(userId);
             java.math.BigDecimal totalSpent = orderService.getTotalSpentByUser(userId);
@@ -109,6 +110,12 @@ public class SupportController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         try {
+            User customer = userService.getUserById(userId)
+                    .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+            if(customer.getRole() != UserRole.CUSTOMER) return ResponseEntity
+                    .badRequest().body(new ApiResponse("User with id " + userId + " is not a customer", null));
+
             Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
             Page<Order> orders = orderService.getUserOrders(userId, pageable);
             Page<OrderSummaryResponse> response = orders.map(OrderSummaryResponse::new);

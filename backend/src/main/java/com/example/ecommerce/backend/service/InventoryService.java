@@ -1,5 +1,7 @@
 package com.example.ecommerce.backend.service;
 
+import com.example.ecommerce.backend.dto.InventoryResponse;
+import com.example.ecommerce.backend.dto.InventoryUpdateRequest;
 import com.example.ecommerce.backend.model.Inventory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +14,7 @@ public interface InventoryService {
 
     // Basic CRUD operations
     Optional<Inventory> getInventoryByProductId(Long productId);
-    Inventory updateInventory(Inventory inventory);
+    InventoryResponse updateInventory(Long productId, InventoryUpdateRequest request);
 
     // Stock management
     Inventory updateStock(Long productId, Integer quantity);

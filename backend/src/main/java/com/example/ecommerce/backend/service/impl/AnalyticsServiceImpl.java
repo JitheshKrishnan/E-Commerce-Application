@@ -3,7 +3,7 @@ package com.example.ecommerce.backend.service.impl;
 import com.example.ecommerce.backend.model.OrderStatus;
 import com.example.ecommerce.backend.model.UserRole;
 import com.example.ecommerce.backend.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,23 +14,15 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AnalyticsServiceImpl implements AnalyticsService {
 
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private OrderItemService orderItemService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private InventoryService inventoryService;
+    private final OrderService orderService;
+    private final OrderItemService orderItemService;
+    private final UserService userService;
+    private final ProductService productService;
+    private final InventoryService inventoryService;
 
     @Override
     public BigDecimal getTotalRevenue(LocalDateTime startDate, LocalDateTime endDate) {

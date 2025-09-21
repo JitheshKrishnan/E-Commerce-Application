@@ -6,18 +6,18 @@
 //import com.example.ecommerce.backend.service.NotificationService;
 //import com.example.ecommerce.backend.service.ProductService;
 //import lombok.extern.slf4j.Slf4j;
-//import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Service;
+//import lombok.RequiredArgsConstructor;
 //
 //import java.util.Optional;
 //
 ////TODO: This Is An Incomplete Class
 //@Service
 //@Slf4j
+//@RequiredArgsConstructor
 //public class NotificationServiceImpl implements NotificationService {
 //
-//    @Autowired
-//    private ProductService productService;
+//    private final ProductService productService;
 //
 //    // In a real implementation, you would inject email service like JavaMailSender
 //    // private JavaMailSender emailSender;

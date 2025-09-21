@@ -2,10 +2,11 @@ package com.example.ecommerce.backend.controller;
 
 import com.example.ecommerce.backend.dto.ApiResponse;
 import com.example.ecommerce.backend.dto.InventoryResponse;
+import com.example.ecommerce.backend.dto.InventoryUpdateRequest;
 import com.example.ecommerce.backend.dto.UpdateStockRequest;
 import com.example.ecommerce.backend.model.Inventory;
 import com.example.ecommerce.backend.service.InventoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,13 +21,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/inventory")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @PreAuthorize("hasRole('SELLER') or hasRole('ADMIN')")
 public class InventoryController {
 
-    @Autowired
-    private InventoryService inventoryService;
+    private final InventoryService inventoryService;
+
+    @PatchMapping("/{productId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SELLER')")
+    public ResponseEntity<?> updateInventory(
+            @PathVariable Long productId,
+            @Valid @RequestBody InventoryUpdateRequest request) {
+        try {
+            InventoryResponse inventoryResponse = inventoryService.updateInventory(productId, request);
+            return ResponseEntity.ok(new ApiResponse("Inventory updated successfully", inventoryResponse));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse("Failed to update inventory: " + e.getMessage(), null));
+        }
+    }
 
     @GetMapping
     public ResponseEntity<?> getAllInventory(

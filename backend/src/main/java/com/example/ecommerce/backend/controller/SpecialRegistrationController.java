@@ -7,7 +7,7 @@ import com.example.ecommerce.backend.dto.StaffRegistrationRequest;
 import com.example.ecommerce.backend.model.User;
 import com.example.ecommerce.backend.model.UserRole;
 import com.example.ecommerce.backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +19,12 @@ import java.util.Optional;
 
 //TODO: Notification To Admin Pending
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/auth/register")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class SpecialRegistrationController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     // Public seller registration (anyone can apply)
     @PostMapping("/seller")

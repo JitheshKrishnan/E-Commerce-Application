@@ -6,7 +6,7 @@ import com.example.ecommerce.backend.dto.UpdateProfileRequest;
 import com.example.ecommerce.backend.dto.UserResponse;
 import com.example.ecommerce.backend.model.User;
 import com.example.ecommerce.backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "*", maxAge = 3600) //TODO: For Production, Modify Origins
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     // Get current user profile
     @GetMapping("/profile")

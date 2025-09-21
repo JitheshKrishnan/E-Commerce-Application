@@ -7,7 +7,7 @@ import com.example.ecommerce.backend.repository.CartItemRepository;
 import com.example.ecommerce.backend.service.CartService;
 import com.example.ecommerce.backend.service.ProductService;
 import com.example.ecommerce.backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,16 +18,12 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
 
-    @Autowired
-    private CartItemRepository cartItemRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ProductService productService;
+    private final CartItemRepository cartItemRepository;
+    private final UserService userService;
+    private final ProductService productService;
 
     @Override
     public CartItem addToCart(Long userId, Long productId, Integer quantity) {

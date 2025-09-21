@@ -5,7 +5,7 @@ import com.example.ecommerce.backend.dto.ProductRequest;
 import com.example.ecommerce.backend.dto.ProductResponse;
 import com.example.ecommerce.backend.model.Product;
 import com.example.ecommerce.backend.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,12 +19,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/products")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
     // Public endpoints - no authentication required
     @GetMapping("/public")

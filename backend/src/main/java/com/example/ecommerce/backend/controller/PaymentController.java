@@ -8,7 +8,6 @@
 //import com.example.ecommerce.backend.service.NotificationService;
 //import com.example.ecommerce.backend.service.OrderService;
 //import com.example.ecommerce.backend.service.UserService;
-//import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.http.ResponseEntity;
 //import org.springframework.security.access.prepost.PreAuthorize;
 //import org.springframework.security.core.Authentication;
@@ -19,19 +18,16 @@
 //import java.time.LocalDateTime;
 //import java.util.List;
 //import java.util.Map;
+//import lombok.RequiredArgsConstructor;
 //
 //@RestController
+//@RequiredArgsConstructor
 //@RequestMapping("/api/payments")
 //@CrossOrigin(origins = "*", maxAge = 3600)
 //public class PaymentController {
 //
-//    @Autowired
 //    private OrderService orderService;
-//
-//    @Autowired
 //    private NotificationService notificationService;
-//
-//    @Autowired
 //    private UserService userService;
 //
 //    @PostMapping("/process")

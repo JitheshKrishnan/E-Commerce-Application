@@ -1,7 +1,6 @@
-// Best Practice Approach: Create a separate InventoryManager service
 package com.example.ecommerce.backend.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.ecommerce.backend.repository.InventoryRepository;
@@ -11,13 +10,11 @@ import com.example.ecommerce.backend.model.Inventory;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class InventoryManager {
 
-    @Autowired
-    private InventoryRepository inventoryRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
+    private final InventoryRepository inventoryRepository;
+    private final ProductRepository productRepository;
 
     public void syncProductAndInventoryStock(Long productId, Integer quantity) {
         // Update both product and inventory in sync

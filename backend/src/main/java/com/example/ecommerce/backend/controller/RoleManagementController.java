@@ -6,7 +6,7 @@ import com.example.ecommerce.backend.dto.RoleChangeResponse;
 import com.example.ecommerce.backend.model.User;
 import com.example.ecommerce.backend.model.UserRole;
 import com.example.ecommerce.backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +17,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/admin/roles")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @PreAuthorize("hasRole('ADMIN')")
 public class RoleManagementController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @PostMapping("/assign/{userId}")
     public ResponseEntity<?> assignRole(@PathVariable Long userId, @Valid @RequestBody RoleChangeRequest request) {

@@ -1,12 +1,12 @@
 package com.example.ecommerce.backend.service.impl;
 
+import com.example.ecommerce.backend.dto.InventoryResponse;
+import com.example.ecommerce.backend.dto.InventoryUpdateRequest;
 import com.example.ecommerce.backend.model.Inventory;
-import com.example.ecommerce.backend.model.Product;
 import com.example.ecommerce.backend.repository.InventoryRepository;
 import com.example.ecommerce.backend.repository.ProductRepository;
 import com.example.ecommerce.backend.service.InventoryService;
-import com.example.ecommerce.backend.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,16 +18,12 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class InventoryServiceImpl implements InventoryService {
 
-    @Autowired
-    private InventoryRepository inventoryRepository;
-
-    @Autowired
-    private InventoryManager inventoryManager;
-
-    @Autowired
-    private ProductRepository productRepository;
+    private final InventoryRepository inventoryRepository;
+    private final InventoryManager inventoryManager;
+    private final ProductRepository productRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -36,11 +32,25 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public Inventory updateInventory(Inventory inventory) {
-        if (!inventoryRepository.existsById(inventory.getId())) {
-            throw new RuntimeException("Inventory not found with id: " + inventory.getId());
+    public InventoryResponse updateInventory(Long productId, InventoryUpdateRequest request) {
+        Inventory inventory = inventoryRepository.findByProductId(productId)
+                .orElseThrow(() -> new RuntimeException("Inventory not found for product: " + productId));
+
+        if (request.getQtyAvailable() != null) {
+            inventory.setQtyAvailable(request.getQtyAvailable());
         }
-        return inventoryRepository.save(inventory);
+        if (request.getReorderLevel() != null) {
+            inventory.setReorderLevel(request.getReorderLevel());
+        }
+        if (request.getWarehouse() != null) {
+            inventory.setWarehouseLocation(request.getWarehouse());
+        }
+
+        Inventory updatedInventory = inventoryRepository.save(inventory);
+
+        inventoryManager.syncProductAndInventoryStock(updatedInventory.getProduct().getId(), updatedInventory.getQtyAvailable());
+
+        return new InventoryResponse(updatedInventory);
     }
 
     @Override

@@ -2,10 +2,7 @@ package com.example.ecommerce.backend.controller;
 
 import com.example.ecommerce.backend.dto.ApiResponse;
 import com.example.ecommerce.backend.service.AnalyticsService;
-//import com.example.ecommerce.backend.service.NotificationService;
-import com.example.ecommerce.backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/admin")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    @Autowired
-    private AnalyticsService analyticsService;
-
-    @Autowired
-    private UserService userService;
+    private final AnalyticsService analyticsService;
 
     //TODO: Use If Using Notification
 //    @Autowired
@@ -196,6 +190,7 @@ public class AdminController {
     @GetMapping("/system/health")
     public ResponseEntity<?> getSystemHealth() {
         try {
+            //TODO: Check Actual Functionalities Instead of Placeholders
             Map<String, Object> health = Map.of(
                     "status", "healthy",
                     "timestamp", LocalDateTime.now(),
@@ -211,6 +206,7 @@ public class AdminController {
         }
     }
 
+    //TODO: Implement Before Deployment
     @PostMapping("/system/maintenance/cleanup")
     public ResponseEntity<?> performCleanup() {
         try {
@@ -228,6 +224,7 @@ public class AdminController {
         }
     }
 
+    //TODO: Implement Before Deployment
     @PostMapping("/system/backup")
     public ResponseEntity<?> initiateBackup() {
         try {
@@ -246,6 +243,7 @@ public class AdminController {
         }
     }
 
+    //TODO: Implement Before Deployment
     @GetMapping("/reports/daily")
     public ResponseEntity<?> getDailyReport(@RequestParam(required = false) String date) {
         try {

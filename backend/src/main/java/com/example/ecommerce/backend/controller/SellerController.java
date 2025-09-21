@@ -9,7 +9,7 @@ import com.example.ecommerce.backend.service.OrderItemService;
 import com.example.ecommerce.backend.service.ProductService;
 import com.example.ecommerce.backend.service.UserService;
 import com.example.ecommerce.backend.service.InventoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,22 +26,16 @@ import java.util.Map;
 
 //TODO: Many Methods Are Incomplete, Rectify Before Deployment
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/seller")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @PreAuthorize("hasRole('SELLER') or hasRole('ADMIN')")
 public class SellerController {
 
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private OrderItemService orderItemService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private InventoryService inventoryService;
+    private final ProductService productService;
+    private final OrderItemService orderItemService;
+    private final UserService userService;
+    private final InventoryService inventoryService;
 
     @GetMapping("/dashboard")
     public ResponseEntity<?> getSellerDashboard(Authentication auth) {

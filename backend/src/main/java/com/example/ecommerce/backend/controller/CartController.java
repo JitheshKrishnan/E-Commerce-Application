@@ -8,7 +8,7 @@ import com.example.ecommerce.backend.model.CartItem;
 import com.example.ecommerce.backend.model.User;
 import com.example.ecommerce.backend.service.CartService;
 import com.example.ecommerce.backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -20,16 +20,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/cart")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @PreAuthorize("hasRole('CUSTOMER') or hasRole('ADMIN')")
 public class CartController {
 
-    @Autowired
-    private CartService cartService;
-
-    @Autowired
-    private UserService userService;
+    private final CartService cartService;
+    private final UserService userService;
 
     @GetMapping
     public ResponseEntity<?> getCart(Authentication auth) {
