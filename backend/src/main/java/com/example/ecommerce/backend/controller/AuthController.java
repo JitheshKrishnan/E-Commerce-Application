@@ -54,7 +54,7 @@ public class AuthController {
 
             return ResponseEntity.ok(new ApiResponse("Login successful", new JwtResponse(
                     jwt,
-                    refreshToken.getToken(),
+                    refreshToken.getAccessToken(),
                     userPrincipal.getId(),
                     userPrincipal.getName(),
                     userPrincipal.getEmail(),
@@ -77,7 +77,27 @@ public class AuthController {
                     signUpRequest.getPhoneNumber()
             );
 
-            return ResponseEntity.ok(new ApiResponse("User registered successfully!", user.getId()));
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(signUpRequest.getEmail(), signUpRequest.getPassword()));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
+
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            List<String> roles = userPrincipal.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
+
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(userPrincipal.getId());
+
+            return ResponseEntity.ok(new ApiResponse("User registered successfully!", new JwtResponse(
+                    jwt,
+                    refreshToken.getAccessToken(),
+                    userPrincipal.getId(),
+                    userPrincipal.getName(),
+                    userPrincipal.getEmail(),
+                    roles
+            )));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(new ApiResponse("Registration failed: " + e.getMessage(), null));

@@ -4,7 +4,7 @@ export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:80
 export const AUTH_ENDPOINTS = {
   LOGIN: '/auth/signin',
   REGISTER: '/auth/signup',
-  REFRESH: '/auth/refreshtoken',
+  REFRESH: '/auth/refresh-token',
   LOGOUT: '/auth/signout'
 } as const;
 

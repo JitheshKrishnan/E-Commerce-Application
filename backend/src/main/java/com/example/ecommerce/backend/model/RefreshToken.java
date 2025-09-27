@@ -20,14 +20,14 @@ public class RefreshToken {
     private User user;
 
     @Column(nullable = false, unique = true)
-    private String token;
+    private String accessToken;
 
     @Column(nullable = false)
     private Instant expiryDate;
 
     public RefreshToken(User user, String token, Instant expiryDate) {
         this.user = user;
-        this.token = token;
+        this.accessToken = token;
         this.expiryDate = expiryDate;
     }
 }
