@@ -45,7 +45,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredRole,
   fallback
 }) => {
-  const { isAuthenticated, isLoading, hasRole, user } = useAuth();
+  const { isAuthenticated, isLoading, hasRole } = useAuth();
   const location = useLocation();
 
   // Show loading spinner while checking authentication
@@ -112,7 +112,7 @@ export const MultiRoleRoute: React.FC<MultiRoleRouteProps> = ({
   allowedRoles,
   fallback
 }) => {
-  const { isAuthenticated, isLoading, hasAnyRole, user } = useAuth();
+  const { isAuthenticated, isLoading, hasAnyRole } = useAuth();
   const location = useLocation();
 
   // Show loading spinner while checking authentication

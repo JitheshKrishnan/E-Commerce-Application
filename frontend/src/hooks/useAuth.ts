@@ -1,6 +1,6 @@
 import { useAuthContext } from '../contexts/AuthContext';
-import { USER_ROLES } from '../utils/constants';
-import type { AuthUser, LoginRequest, RegisterRequest } from '../types';
+import {API_ENDPOINTS, USER_ROLES} from '../utils/constants';
+import type { LoginRequest, RegisterRequest } from '../types';
 
 // Custom hook that provides auth functionality
 export const useAuth = () => {
@@ -23,7 +23,7 @@ export const useAuth = () => {
     hasRole,
     hasAnyRole,
     refreshAuth,
-  } = context as any;
+  } = context;
 
   // Role checking utilities
   const isCustomer = () => hasRole(USER_ROLES.CUSTOMER);
@@ -118,13 +118,13 @@ export const useAuth = () => {
     
     switch (user.role) {
       case USER_ROLES.CUSTOMER:
-        return '/customer/dashboard';
+        return API_ENDPOINTS.USERS.PROFILE;
       case USER_ROLES.SELLER:
-        return '/seller/dashboard';
+        return API_ENDPOINTS.SELLER.DASHBOARD;
       case USER_ROLES.ADMIN:
-        return '/admin/dashboard';
+        return API_ENDPOINTS.ADMIN.DASHBOARD;
       case USER_ROLES.SUPPORT:
-        return '/support/dashboard';
+        return API_ENDPOINTS.SUPPORT.DASHBOARD;
       default:
         return '/';
     }
@@ -136,12 +136,12 @@ export const useAuth = () => {
     
     return !!(
       user.name &&
-      user.email &&
-      user.isActive
+      user.email
     );
   };
 
   // Get required permissions for different actions
+  // TODO: Verify routes with backend
   const canAccessRoute = (route: string): boolean => {
     if (!isAuthenticated) return false;
 

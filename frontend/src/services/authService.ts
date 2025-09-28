@@ -2,8 +2,7 @@ import { apiUtils } from './apiClient';
 import { 
   API_ENDPOINTS,
   AUTH_ENDPOINTS, 
-  STORAGE_KEYS, 
-  SUCCESS_MESSAGES 
+  STORAGE_KEYS 
 } from '../utils/constants';
 import type { 
   LoginRequest, 
@@ -39,7 +38,6 @@ class AuthService {
 
       // Store tokens and user data
       this.setAuthData(token, refreshToken, user);
-      console.log(SUCCESS_MESSAGES.LOGIN);
 
       return user;
     } catch (error) {
@@ -63,7 +61,6 @@ class AuthService {
 
       // Store tokens and user data
       this.setAuthData(token, refreshToken, user);
-      console.log(SUCCESS_MESSAGES.REGISTER);
 
       return user;
     } catch (error) {
@@ -76,7 +73,6 @@ class AuthService {
     try {
       // Call logout endpoint to invalidate tokens on server
       await apiUtils.post(AUTH_ENDPOINTS.LOGOUT);
-      console.log(SUCCESS_MESSAGES.LOGOUT);
     } catch (error) {
       // Even if server call fails, we should clear local data
       console.error('Logout error:', error);
@@ -257,7 +253,6 @@ class AuthService {
         oldPassword,
         newPassword
       });
-      console.log(SUCCESS_MESSAGES.PASSWORD_CHANGED);
     } catch (error) {
       throw this.handleAuthError(error);
     }

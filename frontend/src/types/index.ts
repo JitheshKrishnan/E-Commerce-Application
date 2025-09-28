@@ -215,7 +215,7 @@ export interface SupportDashboardStats {
 }
 
 // API response types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T> {
   message: string;
   data: T;
   success: boolean;
@@ -379,8 +379,13 @@ export interface AuthContextType {
   isLoading: boolean;
   login: (credentials: LoginRequest) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateUser: (userData: Partial<AuthUser>) => void;
+  error: string | null;
+  clearError: () => void;
+  hasRole: (role: string) => boolean;
+  hasAnyRole: (roles: string[]) => boolean;
+  refreshAuth: () => Promise<void>;
 }
 
 export interface CartContextType {
@@ -451,4 +456,4 @@ export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>;
 export type Nullable<T> = T | null;
 export type AsyncFunction<T = void> = () => Promise<T>;
-export type EventHandler<T = any> = (event: T) => void;
+export type EventHandler<T> = (event: T) => void;

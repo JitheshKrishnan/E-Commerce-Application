@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, Phone, MapPin, Loader2 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { USER_ROLES } from '../../utils/constants';
+import {USER_ROLES, VALIDATION_RULES} from '../../utils/constants';
 import type { RegisterFormData } from '../../types';
 
 interface RegisterFormProps {
@@ -14,8 +14,7 @@ interface RegisterFormProps {
 export const RegisterForm: React.FC<RegisterFormProps> = ({
   onSuccess,
   onError,
-  className = '',
-  defaultRole = USER_ROLES.CUSTOMER
+  className = ''
 }) => {
   const { register, isLoading, error, clearError } = useAuth();
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -24,8 +23,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
     password: '',
     confirmPassword: '',
     phoneNumber: '',
-    address: '',
-    role: defaultRole
+    address: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -61,21 +59,23 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
     // Name validation
     if (!formData.name?.trim()) {
       errors.name = 'Full name is required';
-    } else if (formData.name.trim().length < 2) {
+    } else if (formData.name.trim().length < VALIDATION_RULES.NAME_MIN_LENGTH) {
       errors.name = 'Name must be at least 2 characters';
+    } else if (formData.name.trim().length > VALIDATION_RULES.NAME_MAX_LENGTH) {
+        errors.name = 'Name must be at most 100 characters';
     }
 
     // Email validation
     if (!formData.email) {
       errors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    } else if (!VALIDATION_RULES.EMAIL.test(formData.email)) {
       errors.email = 'Please enter a valid email address';
     }
 
     // Password validation
     if (!formData.password) {
       errors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
+    } else if (formData.password.length < VALIDATION_RULES.PASSWORD_MIN_LENGTH) {
       errors.password = 'Password must be at least 6 characters';
     }
 
@@ -87,7 +87,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
     }
 
     // Phone number validation (optional)
-    if (formData.phoneNumber && !/^\+?[\d\s-()]+$/.test(formData.phoneNumber)) {
+    if (formData.phoneNumber && !VALIDATION_RULES.PHONE.test(formData.phoneNumber)) {
       errors.phoneNumber = 'Please enter a valid phone number';
     }
 
@@ -110,7 +110,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         password: formData.password,
         phoneNumber: formData.phoneNumber || undefined,
         address: formData.address || undefined,
-        role: formData.role
       });
 
       if (success) {

@@ -196,7 +196,6 @@ export const ROUTES = {
   
   // Customer routes
   CUSTOMER: {
-    DASHBOARD: '/customer/dashboard',
     ORDERS: '/customer/orders',
     PROFILE: '/customer/profile'
   },

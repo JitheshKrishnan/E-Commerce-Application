@@ -174,6 +174,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // Update user function
+  // TODO: Verify only admin can do this
   const updateUser = (userData: Partial<AuthUser>): void => {
     authService.updateUserData(userData);
     dispatch({ type: 'UPDATE_USER', payload: userData });
@@ -203,11 +204,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register,
     logout,
     updateUser,
-  };
-
-  // Additional context value with extra utilities
-  const extendedContextValue = {
-    ...contextValue,
     error: state.error,
     clearError,
     hasRole,
@@ -216,7 +212,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={extendedContextValue as any}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

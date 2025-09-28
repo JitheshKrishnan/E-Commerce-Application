@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import type { LoginFormData } from '../../types';
+import {VALIDATION_RULES} from "../../utils/constants.ts";
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -52,14 +53,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     // Email validation
     if (!formData.email) {
       errors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    } else if (!VALIDATION_RULES.EMAIL.test(formData.email)) {
       errors.email = 'Please enter a valid email address';
     }
 
     // Password validation
     if (!formData.password) {
       errors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
+    } else if (formData.password.length < VALIDATION_RULES.PASSWORD_MIN_LENGTH) {
       errors.password = 'Password must be at least 6 characters';
     }
 
